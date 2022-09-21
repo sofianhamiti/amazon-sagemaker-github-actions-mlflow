@@ -1,0 +1,28 @@
+processing:
+    image_uri: # <your processing ECR image URI>
+    entry_point: src/model_build/data_preparation/prepare.py
+    parameters:
+        output_folder: /opt/ml/processing/output
+        file_name: housing.csv
+    instance_count: 1
+    instance_type: ml.m5.xlarge
+    base_job_name: housing
+
+training:
+    image_uri: # <your training ECR image URI>
+    entry_point: train.py
+    source_dir: src/model_build/training
+    hyperparameters:
+        n_estimators: 150
+        target: MedHouseVal
+        tracking_uri: # <your mlflow tracking server URI>
+        experiment_name: housing
+        save_model_in_registry: True
+        model_name: housing-random-forest
+    instance_count: 1
+    instance_type: ml.m5.xlarge
+    # instance_type: local # if you want to run job in a container local
+    base_job_name: housing
+
+pipeline:
+    name: housing

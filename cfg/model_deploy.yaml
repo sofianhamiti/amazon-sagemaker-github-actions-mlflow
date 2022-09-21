@@ -1,0 +1,14 @@
+model:
+    name: housing-random-forest
+    version: 1
+    tracking_uri: # <your mlflow tracking server URI>
+    location_ssm_parameter: /housing/model/location
+
+endpoint:
+    name: housing
+    instance_type: ml.m5.xlarge
+    instance_count: 1
+    image_uri: 1234567890.dkr.ecr.region.amazonaws.com/mlflow-pyfunc:1.28.0 # <your mlflow-pyfunc ECR IMAGE URI>
+
+
+

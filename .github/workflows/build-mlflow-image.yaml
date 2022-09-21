@@ -1,0 +1,46 @@
+name: Build and push MLflow docker image to ECR
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docker/mlflow_endpoint/**
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-mlflow-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{secrets.IAM_ROLE}}
+          aws-region: ${{secrets.AWS_REGION}}
+          # role-skip-session-tagging: true
+          # role-duration-seconds: 1200
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install -r requirements.txt
+
+      - name: Build and Push MLflow image
+        run: |
+          cd docker/mlflow_endpoint/
+          bash mlflow_pyfunc.sh

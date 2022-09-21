@@ -1,0 +1,39 @@
+name: Build and push docker images
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docker/processing/**
+      - docker/training/**
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-images:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - folder: docker/processing/
+            repository_name: housing-processing
+          - folder: docker/training/
+            repository_name: housing-training
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build and Push training image
+        # uses: sofianhamiti/composite-action-push-image-ecr-act@main # for using act locally
+        uses: sofianhamiti/composite-action-push-image-ecr@main
+        with:
+          folder: ${{matrix.folder}}
+          repository_name: ${{matrix.repository_name}}
+          image_tag: ${{github.sha}}
+          aws_region: ${{secrets.AWS_REGION}}
+          iam_role: ${{secrets.IAM_ROLE}}

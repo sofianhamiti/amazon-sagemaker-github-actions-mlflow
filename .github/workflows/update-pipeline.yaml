@@ -1,0 +1,41 @@
+name: Update SageMaker Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - src/model_build/**
+      - cfg/model_build.yaml
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  submit-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{secrets.IAM_ROLE}}
+          aws-region: ${{secrets.AWS_REGION}}
+          # role-skip-session-tagging: true
+          # role-duration-seconds: 1200
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install -r requirements.txt
+
+      - name: Create/Update pipeline in SageMaker
+        run: python3 scripts/submit_pipeline.py

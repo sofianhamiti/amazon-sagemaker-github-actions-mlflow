@@ -1,0 +1,6 @@
+pyyaml
+boto3
+mlflow==1.28.0
+sagemaker==2.105.0
+aws-cdk-lib==2.42.0
+constructs==10.1.96
