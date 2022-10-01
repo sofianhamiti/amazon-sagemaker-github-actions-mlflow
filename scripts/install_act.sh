@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
 
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-echo 'eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"' >> /home/ec2-user/.profile
-eval "$(/home/ec2-user/.linuxbrew/bin/brew shellenv)"
-
-sudo yum groupinstall -y 'Development Tools'
-
-brew install gcc act
+curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
+echo 'export PATH=/home/ec2-user/bin/:$PATH' >> /home/ec2-user/.profile
